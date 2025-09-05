@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 
 
-opperations = {
+operations  = {
     "+": lambda x, y: x + y,
     "-": lambda x, y: x - y,
     "*": lambda x, y: x * y,
@@ -13,24 +13,26 @@ opperations = {
     "%": lambda x, y: x % y,
 }
 
-def math_parser(messege:str, json_log:bool = True,
+def math_parser(message:str, precision: int = 4,
+                json_log:bool = True,
                 return_encoding:bool = False,
-                filePath:Path = Path(__file__).parent) -> float:
+                file_path:Path = Path(__file__).parent) -> float:
     
     filename = "user-math-story.json"
     number_slots = []
     operator_slots = []
-    NUMBERS_CHARS  = '1234567890.'
-    OPERATIONS_CHARS = ''.join(opperations.keys())
+    NUMBERS_CHARS = '1234567890.'
+    OPERATIONS_CHARS = ''.join(operations .keys())
     OPERATIONS_PRIORITY = {
         1 : 'pow',
         2 : '*//%',
         3 : '+-'
     }
+        
     num = ''
     last_operator = '+'
     
-    for i, item in enumerate(messege):
+    for i, item in enumerate(message):
         if item in NUMBERS_CHARS  + OPERATIONS_CHARS:
             if item in NUMBERS_CHARS :
                 if item == '.' and item in num:
@@ -40,7 +42,7 @@ def math_parser(messege:str, json_log:bool = True,
                 num += item
                 
             if item in OPERATIONS_CHARS:
-                if messege[i] == messege[i-1] and item in "*/" and i > 0:
+                if message[i] == message[i-1] and item in "*/" and i > 0:
                     last_operator = item * 2
                 else:
                     last_operator = item
@@ -48,7 +50,7 @@ def math_parser(messege:str, json_log:bool = True,
                     number_slots.append(num)
                     num = ''
                     
-            if i == len(messege) - 1 and num != "":
+            if i == len(message) - 1 and num != "":
                 number_slots.append(num)
     
     try:
@@ -87,7 +89,7 @@ def math_parser(messege:str, json_log:bool = True,
         for i, op in enumerate(operator_slots.copy()):            
             if op in OPERATIONS_PRIORITY[priority]:
                 try:
-                    number_slots[i + 1] = opperations[operator_slots[i]](
+                    number_slots[i + 1] = operations [operator_slots[i]](
                         number_slots[i],
                         number_slots[i + 1]
                     )
@@ -109,23 +111,26 @@ def math_parser(messege:str, json_log:bool = True,
     if json_log:
         data_slot = dict()
         data_slot['date_time'] = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
-        data_slot['user_messege'] = messege
-        data_slot['messege_encoding'] = encoding
+        data_slot['user_message'] = message
+        data_slot['message_encoding'] = encoding
         data_slot['result'] = result
         
-        filePath =  filePath / filename
-        if filePath.exists():
-            with open(filePath, mode="r", encoding='utf-8') as file:
+        file_path =  file_path / filename
+        if file_path.exists():
+            with open(file_path, mode="r", encoding='utf-8') as file:
                 try:
                     jsonData = json.load(file)
                 except json.JSONDecodeError:
                     jsonData = []
             
                 jsonData.append(data_slot)
-            with open(filePath, mode="w", encoding='utf-8') as file:
+            with open(file_path, mode="w", encoding='utf-8') as file:
                 json.dump(jsonData, file, ensure_ascii=False, indent=2)
         else:   
-            with open(filePath, mode='w', encoding='utf-8') as file:
+            with open(file_path, mode='w', encoding='utf-8') as file:
                 json.dump([data_slot], file, ensure_ascii=False, indent=2)
             
+    if precision:
+        return round(result,precision )
+    
     return result
