@@ -14,6 +14,7 @@ opperations = {
 }
 
 def math_parser(messege:str, json_log:bool = True,
+                return_encoding:bool = False,
                 filePath:Path = Path(__file__).parent) -> float:
     
     filename = "user-math-story.json"
@@ -64,7 +65,13 @@ def math_parser(messege:str, json_log:bool = True,
             continue
         number_slots[i] = float(nums)
     
-    encoding = ''.join(f'{x,y}' for x, y in zip(operator_slots, number_slots)).strip()
+    __empty = ['' for x in range(len(number_slots))]
+    __form = ''.join(f'{x,y,z}' for x, y, z in zip(__empty, operator_slots, number_slots))
+    encoding = ''.join([x for x in __form if x not in "('),"]).strip()
+    if return_encoding:
+        return encoding
+      
+        
     result = 0
     for i, op in enumerate(operator_slots):
         if i >= len(number_slots):
