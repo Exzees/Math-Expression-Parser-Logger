@@ -64,40 +64,39 @@ def math_parser(messege:str, json_log:bool = True,
             continue
         number_slots[i] = float(nums)
     
+    encoding = ''.join(f'{x,y}' for x, y in zip(operator_slots, number_slots)).strip()
     result = 0
     for i, op in enumerate(operator_slots):
-        if i > len(number_slots):
+        if i >= len(number_slots):
             break
         
         if op in '//**%':
+            
             try:
-                result += opperations[operator_slots[i]](
+                number_slots[i] = opperations[operator_slots.pop(i)](
                     number_slots[i-1],
                     number_slots[i]
                 )
+                number_slots.pop(i - 1)
             except ZeroDivisionError:
                 print(ZeroDivisionError)
                 continue
             
     for i, op in enumerate(operator_slots):
-        if i > len(number_slots):
+        if i >= len(number_slots):
             break
         
-        if op in '+-':
-            try:
-                result += opperations[operator_slots[i]](
-                    number_slots[i-1],
-                    number_slots[i]
-                )
-            except ZeroDivisionError:
-                print(ZeroDivisionError)
-                continue
-            
+        if i != 0:
+            result += opperations[operator_slots[i]](
+                number_slots[i-1],
+                number_slots[i]
+            )
+
     if json_log:
         data_slot = dict()
         data_slot['date_time'] = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
         data_slot['user_messege'] = messege
-        data_slot['messege_encoding'] = ''.join(f'{x,y}' for x, y in zip(operator_slots, number_slots)).strip()
+        data_slot['messege_encoding'] = encoding
         data_slot['result'] = result
         
         filePath =  filePath / filename
