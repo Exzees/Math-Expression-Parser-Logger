@@ -66,7 +66,7 @@ def math_parser(messege:str, json_log:bool = True,
     
     result = 0
     for i, op in enumerate(operator_slots):
-        if i >= len(number_slots):
+        if i > len(number_slots):
             break
         
         if op in '/*%':
@@ -80,7 +80,7 @@ def math_parser(messege:str, json_log:bool = True,
                 continue
             
     for i, op in enumerate(operator_slots):
-        if i >= len(number_slots):
+        if i > len(number_slots):
             break
         
         if op in '+-':
