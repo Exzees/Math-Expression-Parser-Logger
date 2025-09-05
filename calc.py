@@ -16,11 +16,11 @@ opperations = {
 def math_parser(messege:str) -> float:
     
     filename = "user-math-story.json"
-    numslots = []
-    opslots = []
+    number_slots = []
+    operator_slots = []
     numbers = '1234567890.'
     num = ''
-    lastop = '+'
+    last_operator = '+'
     
     for i, item in enumerate(messege):
         if item in numbers + ''.join(opperations.keys()):
@@ -28,59 +28,59 @@ def math_parser(messege:str) -> float:
                 if item == '.' and item in num:
                     continue
                 if num == '':
-                    opslots.append(lastop)
+                    operator_slots.append(last_operator)
                 num += item
                 
             if item in opperations.keys():
                 if messege[i] == messege[i-1] and item in "*/" and i > 0:
-                    lastop = item * 2
+                    last_operator = item * 2
                 else:
-                    lastop = item
+                    last_operator = item
                 if num:
-                    numslots.append(num)
+                    number_slots.append(num)
                     num = ''
                     
             if i == len(messege) - 1 and num != "":
-                numslots.append(num)
+                number_slots.append(num)
     
     try:
-        if len(numslots) == 0:
+        if len(number_slots) == 0:
             raise ValueError
-        elif len(numslots) == 1:
-            return numslots[0]
+        elif len(number_slots) == 1:
+            return number_slots[0]
     except ValueError:
-        print('numslots is empty')
+        print('number_slots is empty')
         return
     
            
-    for i, nums in enumerate(numslots):
+    for i, nums in enumerate(number_slots):
         if i == 0:
-            if opslots[0] == "-":
-                numslots[0] = float(f'-{nums}')
+            if operator_slots[0] == "-":
+                number_slots[0] = float(f'-{nums}')
             else:
-                numslots[0] = float(f'+{nums}')
+                number_slots[0] = float(f'+{nums}')
             continue
-        numslots[i] = float(nums)
+        number_slots[i] = float(nums)
     
     result = 0
-    for op in enumerate(opslots):
-        if i >= len(numslots):
+    for op in enumerate(operator_slots):
+        if i >= len(number_slots):
             break
 
         try:
-            result += opperations[opslots[i]](
-                numslots[i-1],
-                numslots[i]
+            result += opperations[operator_slots[i]](
+                number_slots[i-1],
+                number_slots[i]
             )
         except ZeroDivisionError:
             print(ZeroDivisionError)
             continue
     
-    dataSlot = dict()
-    dataSlot['date_time'] = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
-    dataSlot['user_messege'] = messege
-    dataSlot['messege_encoding'] = ''.join(f'{x,y}' for x, y in zip(opslots, numslots)).strip()
-    dataSlot['result'] = result
+    data_slot = dict()
+    data_slot['date_time'] = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
+    data_slot['user_messege'] = messege
+    data_slot['messege_encoding'] = ''.join(f'{x,y}' for x, y in zip(operator_slots, number_slots)).strip()
+    data_slot['result'] = result
     
     filePath = Path(__file__).parent / filename
     if filePath.exists():
@@ -90,13 +90,11 @@ def math_parser(messege:str) -> float:
             except json.JSONDecodeError:
                 jsonData = []
         
-            jsonData.append(dataSlot)
+            jsonData.append(data_slot)
         with open(filePath, mode="w", encoding='utf-8') as file:
             json.dump(jsonData, file, ensure_ascii=False, indent=2)
     else:   
         with open(filePath, mode='w', encoding='utf-8') as file:
-            json.dump([dataSlot], file, ensure_ascii=False, indent=2)
+            json.dump([data_slot], file, ensure_ascii=False, indent=2)
             
     return result
-    
-
