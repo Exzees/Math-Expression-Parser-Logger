@@ -4,13 +4,13 @@ from pathlib import Path
 
 
 opperations = {
-    "+": lambda x, y : x + y,
-    "-": lambda x, y : x - y,
-    "*": lambda x, y : x * y,
-    "/": lambda x, y : x / y,
-    "//": lambda x, y : x // y,
-    "**": lambda x, y : x ** y,
-    "%": lambda x, y : x % y,
+    "+": lambda x, y: x + y,
+    "-": lambda x, y: x - y,
+    "*": lambda x, y: x * y,
+    "/": lambda x, y: x / y,
+    "//": lambda x, y: x // y,
+    "**": lambda x, y: x ** y,
+    "%": lambda x, y: x % y,
 }
 
 def math_parser(messege:str) -> float:
@@ -18,13 +18,13 @@ def math_parser(messege:str) -> float:
     filename = "user-math-story.json"
     number_slots = []
     operator_slots = []
-    numbers = '1234567890.'
+    NUMBERS_CHARS  = '1234567890.'
     num = ''
     last_operator = '+'
     
     for i, item in enumerate(messege):
-        if item in numbers + ''.join(opperations.keys()):
-            if item in numbers:
+        if item in NUMBERS_CHARS  + ''.join(opperations.keys()):
+            if item in NUMBERS_CHARS :
                 if item == '.' and item in num:
                     continue
                 if num == '':
