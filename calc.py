@@ -1,4 +1,3 @@
-from sys import exit
 from datetime import datetime
 import json
 from pathlib import Path
@@ -16,9 +15,6 @@ opperations = {
 
 def math_parser(messege:str) -> float:
     
-    if messege == "exit":
-        exit()
-
     filename = "user-math-story.json"
     numslots = []
     opslots = []
