@@ -9,7 +9,7 @@ opperations = {
     "*": lambda x, y: x * y,
     "/": lambda x, y: x / y,
     "//": lambda x, y: x // y,
-    "**": lambda x, y: x ** y,
+    "pow": lambda x, y: x ** y,
     "%": lambda x, y: x % y,
 }
 
@@ -22,6 +22,11 @@ def math_parser(messege:str, json_log:bool = True,
     operator_slots = []
     NUMBERS_CHARS  = '1234567890.'
     OPERATIONS_CHARS = ''.join(opperations.keys())
+    OPERATIONS_PRIORITY = {
+        1 : 'pow',
+        2 : '*//%',
+        3 : '+-'
+    }
     num = ''
     last_operator = '+'
     
@@ -62,8 +67,10 @@ def math_parser(messege:str, json_log:bool = True,
                 number_slots[0] = float(f'-{nums}')
             else:
                 number_slots[0] = float(f'+{nums}')
+                operator_slots[0] = '+'
             continue
         number_slots[i] = float(nums)
+    del operator_slots[0]
     
     __empty = ['' for x in range(len(number_slots))]
     __form = ''.join(f'{x,y,z}' for x, y, z in zip(__empty, operator_slots, number_slots))
@@ -71,34 +78,34 @@ def math_parser(messege:str, json_log:bool = True,
     if return_encoding:
         return encoding
       
-        
-    result = 0
-    for i, op in enumerate(operator_slots):
-        if i >= len(number_slots):
-            break
-        
-        if op in '//**%':
-            
-            try:
-                number_slots[i] = opperations[operator_slots.pop(i)](
-                    number_slots[i-1],
-                    number_slots[i]
-                )
-                number_slots.pop(i - 1)
-            except ZeroDivisionError:
-                print(ZeroDivisionError)
-                continue
-            
-    for i, op in enumerate(operator_slots):
-        if i >= len(number_slots):
-            break
-        
-        if i != 0:
-            result += opperations[operator_slots[i]](
-                number_slots[i-1],
-                number_slots[i]
-            )
-
+    for i, item in enumerate(operator_slots):
+        if item == '**':
+            operator_slots[i] = 'pow'
+      
+    debug = []
+    for priority in OPERATIONS_PRIORITY.keys():
+        for i, op in enumerate(operator_slots.copy()):            
+            if op in OPERATIONS_PRIORITY[priority]:
+                try:
+                    number_slots[i + 1] = opperations[operator_slots[i]](
+                        number_slots[i],
+                        number_slots[i + 1]
+                    )
+                    debug.append(i)
+                    
+                except IndexError:
+                    result += number_slots[0]   
+                except ZeroDivisionError:
+                    print(ZeroDivisionError) 
+                                    
+        debug.reverse()
+        if debug:
+            for idx in debug:
+                del number_slots[idx]
+                del operator_slots[idx]
+            debug.clear()
+    result = number_slots[len(number_slots) - 1] 
+                    
     if json_log:
         data_slot = dict()
         data_slot['date_time'] = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
