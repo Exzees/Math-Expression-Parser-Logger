@@ -13,7 +13,7 @@ opperations = {
     "%": lambda x, y: x % y,
 }
 
-def math_parser(messege:str) -> float:
+def math_parser(messege:str, json_log:bool = True) -> float:
     
     filename = "user-math-story.json"
     number_slots = []
@@ -75,26 +75,27 @@ def math_parser(messege:str) -> float:
         except ZeroDivisionError:
             print(ZeroDivisionError)
             continue
-    
-    data_slot = dict()
-    data_slot['date_time'] = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
-    data_slot['user_messege'] = messege
-    data_slot['messege_encoding'] = ''.join(f'{x,y}' for x, y in zip(operator_slots, number_slots)).strip()
-    data_slot['result'] = result
-    
-    filePath = Path(__file__).parent / filename
-    if filePath.exists():
-        with open(filePath, mode="r", encoding='utf-8') as file:
-            try:
-                jsonData = json.load(file)
-            except json.JSONDecodeError:
-                jsonData = []
         
-            jsonData.append(data_slot)
-        with open(filePath, mode="w", encoding='utf-8') as file:
-            json.dump(jsonData, file, ensure_ascii=False, indent=2)
-    else:   
-        with open(filePath, mode='w', encoding='utf-8') as file:
-            json.dump([data_slot], file, ensure_ascii=False, indent=2)
+    if json_log:
+        data_slot = dict()
+        data_slot['date_time'] = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
+        data_slot['user_messege'] = messege
+        data_slot['messege_encoding'] = ''.join(f'{x,y}' for x, y in zip(operator_slots, number_slots)).strip()
+        data_slot['result'] = result
+        
+        filePath = Path(__file__).parent / filename
+        if filePath.exists():
+            with open(filePath, mode="r", encoding='utf-8') as file:
+                try:
+                    jsonData = json.load(file)
+                except json.JSONDecodeError:
+                    jsonData = []
+            
+                jsonData.append(data_slot)
+            with open(filePath, mode="w", encoding='utf-8') as file:
+                json.dump(jsonData, file, ensure_ascii=False, indent=2)
+        else:   
+            with open(filePath, mode='w', encoding='utf-8') as file:
+                json.dump([data_slot], file, ensure_ascii=False, indent=2)
             
     return result
