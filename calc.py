@@ -14,8 +14,7 @@ opperations = {
     "%": lambda x, y : x % y,
 }
 
-while True:
-    messege = input().lower()
+def math_parser(messege:str) -> float:
     
     if messege == "exit":
         exit()
@@ -52,11 +51,10 @@ while True:
         if len(numslots) == 0:
             raise ValueError
         elif len(numslots) == 1:
-            print(f'Ваше число: {float(numslots[0])}')
-            continue
+            return numslots[0]
     except ValueError:
-        print('Чисел не найдено')
-        continue
+        print('numslots is empty')
+        return
     
            
     for i, nums in enumerate(numslots):
@@ -79,7 +77,7 @@ while True:
                 numslots[i]
             )
         except ZeroDivisionError:
-            print('На ноль делить нельзя')
+            print(ZeroDivisionError)
             continue
     
     dataSlot = dict()
@@ -103,6 +101,6 @@ while True:
         with open(filePath, mode='w', encoding='utf-8') as file:
             json.dump([dataSlot], file, ensure_ascii=False, indent=2)
             
-    print(f'Результат выполнения: {result}')
+    return result
     
 
