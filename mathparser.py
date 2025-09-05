@@ -70,13 +70,13 @@ def math_parser(messege:str, json_log:bool = True,
                 operator_slots[0] = '+'
             continue
         number_slots[i] = float(nums)
-    del operator_slots[0]
     
     __empty = ['' for x in range(len(number_slots))]
     __form = ''.join(f'{x,y,z}' for x, y, z in zip(__empty, operator_slots, number_slots))
     encoding = ''.join([x for x in __form if x not in "('),"]).strip()
     if return_encoding:
         return encoding
+    del operator_slots[0]
       
     for i, item in enumerate(operator_slots):
         if item == '**':
