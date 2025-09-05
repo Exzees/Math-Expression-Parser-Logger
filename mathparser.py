@@ -93,8 +93,6 @@ def math_parser(messege:str, json_log:bool = True,
                 print(ZeroDivisionError)
                 continue
             
-        
-            
     if json_log:
         data_slot = dict()
         data_slot['date_time'] = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
