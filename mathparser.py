@@ -69,7 +69,7 @@ def math_parser(messege:str, json_log:bool = True,
         if i > len(number_slots):
             break
         
-        if op in '/*%':
+        if op in '//**%':
             try:
                 result += opperations[operator_slots[i]](
                     number_slots[i-1],
