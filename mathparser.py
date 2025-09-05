@@ -65,19 +65,36 @@ def math_parser(messege:str, json_log:bool = True,
         number_slots[i] = float(nums)
     
     result = 0
-    for op in enumerate(operator_slots):
+    for i, op in enumerate(operator_slots):
         if i >= len(number_slots):
             break
-
-        try:
-            result += opperations[operator_slots[i]](
-                number_slots[i-1],
-                number_slots[i]
-            )
-        except ZeroDivisionError:
-            print(ZeroDivisionError)
-            continue
         
+        if op in '/*%':
+            try:
+                result += opperations[operator_slots[i]](
+                    number_slots[i-1],
+                    number_slots[i]
+                )
+            except ZeroDivisionError:
+                print(ZeroDivisionError)
+                continue
+            
+    for i, op in enumerate(operator_slots):
+        if i >= len(number_slots):
+            break
+        
+        if op in '+-':
+            try:
+                result += opperations[operator_slots[i]](
+                    number_slots[i-1],
+                    number_slots[i]
+                )
+            except ZeroDivisionError:
+                print(ZeroDivisionError)
+                continue
+            
+        
+            
     if json_log:
         data_slot = dict()
         data_slot['date_time'] = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
