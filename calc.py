@@ -24,12 +24,11 @@ while True:
     numslots = []
     opslots = []
     numbers = '1234567890.'
-    validation = f'{numbers}+-/*%'
     num = ''
     lastop = '+'
     
     for i, item in enumerate(messege):
-        if item in validation:
+        if item in numbers + ''.join(opperations.keys()):
             if item in numbers:
                 if item == '.' and item in num:
                     continue
